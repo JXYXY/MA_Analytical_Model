@@ -1,0 +1,8 @@
+function equ = inclination(theta_s,theta_m2,theta_mf,d0,a)
+rho_star = a*
+lambda = R*theta_m2/(a+rho2);
+d = d0*lambda;
+R = d+2*a*sin(theta_s)/(2*sin(theta_m2/2));
+equ = csc(theta_mf) - cos(theta_s)*cot(theta_mf) - sin(theta_s) - d/a;
+
+end

@@ -1,0 +1,41 @@
+function [theta,d_theta,y] = diffeqn(L,lambda,H_ext,F_gr,g,mu,B,H)
+%     opts = bvpset('FJacobian',@jac,'RelTol',0.1,'AbsTol',0.1,'Stats','on');
+    x = linspace(0,L,10);
+    solinit = bvpinit(x, [0;0;0]);
+    M_T = 2.0431E4;
+%     sol = bvp5c(@odefun, @bcfcn,solinit,opts);
+sol = bvp5c(@(x,t)odefun, @(ta,tb)bcfcn,solinit);
+    theta = sol.y(1,:);
+    d_theta = sol.y(2,:);
+    y = sol.y(3,:);
+
+
+    function dtdx = odefun(x,t)
+        g_y = 9.81*0.002*0.002;
+        c = (mu*B*H)*3*lambda^8
+        para_1 = H_ext/c;
+        para_2 = F_gr /c;
+        dtdx = [
+            t(2);
+            para_1 * sin(t(1)) -  para_2*cos(t(1)) - g_y*c*(L-x)
+            lambda*sin(t(1))
+            ];
+    end
+
+    function res = bcfcn(ta,tb)
+        res = [ta(1)
+            tb(2)-3*M_T*lambda^7/(mu*B*H)
+            ta(3) ];
+    end
+% 
+%     function dfdt = jac(x,t)
+%         g_x = 0;
+%         g_y = g;
+%         para_1 = (H_ext + g_x*(L-x))/(mu*B*H);
+%         para_2 = (F_gr + g_y*(L-x))/(mu*B*H);
+%         dfdt = [0,1,0
+%             -(para_1*cos(t(1))+para_2*sin(t(1)))/(2*t(2)*H^2),(para_1*sin(t(1))-para_2*cos(t(1)))/(2*H^2*t(2)^2),0
+%             lambda*cos(t(1)),0,0];
+%     end
+
+end
